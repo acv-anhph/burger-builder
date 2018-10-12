@@ -1,0 +1,12 @@
+.Person {
+    border: 1px solid black;
+    boxShadow: 0 2px 3px #eee;
+    width: 50%;
+    margin: 15px auto
+}
+
+@media screen and (min-width: 500px) {
+    .Person {
+        width: 500px;
+    }
+}
