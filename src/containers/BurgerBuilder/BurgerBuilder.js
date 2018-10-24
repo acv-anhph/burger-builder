@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import Aux from '../../hoc/_Aux';
 import Burger from '../../Components/Burger/Burger';
 import BuildControls from '../../Components/Burger/BuildControls/BuildControls';
+import Modal from '../../Components/UI/Modal/Modal';
+import OrderSummary from '../../Components/Burger/OrderSummary/OrderSummary';
 
 const INGREDIENT_PRICES = {
   salad: 0.5,
@@ -18,7 +20,21 @@ class BurgerBuilder extends Component {
       cheese: 0,
       meat: 0
     },
-    totalPrice: 4
+    totalPrice: 4,
+    purchasable: false,
+    purchasing: false
+  };
+  
+  purchaseHandler = () => {this.setState({purchasing: true})};
+
+  updatePurchaseState = (ingredients) => {
+    const sum = Object.keys(ingredients).map(key => {
+      return ingredients[key];
+    }).reduce((sum, el) => {
+      return sum + el;
+    }, 0);
+
+    this.setState({purchasable: sum > 0});
   };
 
   addIngredientHandler = (type) => {
@@ -31,6 +47,8 @@ class BurgerBuilder extends Component {
       ingredients: newIngredients,
       totalPrice: newTotalPrice
     });
+
+    this.updatePurchaseState(newIngredients);
   };
 
   removeIngredientHandler = (type) => {
@@ -47,6 +65,12 @@ class BurgerBuilder extends Component {
       ingredients: newIngredients,
       totalPrice: newTotalPrice
     });
+
+    this.updatePurchaseState(newIngredients);
+  };
+
+  purchaseCancelHandler = () => {
+    this.setState({purchasing: false});
   };
 
   render() {
@@ -58,12 +82,17 @@ class BurgerBuilder extends Component {
 
     return (
       <Aux>
+        <Modal show={this.state.purchasing} cancelPurchase={this.purchaseCancelHandler}>
+          <OrderSummary ingredients={this.state.ingredients}/>
+        </Modal>
         <Burger ingredients={this.state.ingredients}/>
         <BuildControls
           addIngredient={this.addIngredientHandler}
           removeIngredient={this.removeIngredientHandler}
           disabledInfo={disabledInfo}
           price={this.state.totalPrice}
+          purchasable={this.state.purchasable}
+          purchaseHandler={this.purchaseHandler}
         />
       </Aux>
     );
