@@ -1,19 +1,36 @@
-import React from 'react';
+import React, {Component} from 'react';
 import Aux from '../../hoc/_Aux';
 import classes from './Layout.css';
 import Header from '../Header/Header';
 import SideDrawer from "../Navigation/SideDrawer/SideDrawer";
 
-const Layout = props => {
-  return (
-    <Aux>
-      <Header></Header>
-      <SideDrawer/>
-      <main className={classes.Content}>
-        {props.children}
-      </main>
-    </Aux>
-  );
-};
+class Layout extends Component {
+  state = {
+    showSideDrawer: true
+  };
+
+  sideDrawerClosedhandler = () => {
+    this.setState({showSideDrawer: false});
+  };
+
+  sideDrawerTogglehandler = () => {
+    this.setState((prevState) => {
+      return {showSideDrawer: !prevState.showSideDrawer}
+    });
+
+  };
+
+  render() {
+    return (
+      <Aux>
+        <Header drawerToggleClicked={this.sideDrawerTogglehandler}/>
+        <SideDrawer open={this.state.showSideDrawer} closed={this.sideDrawerClosedhandler}/>
+        <main className={classes.Content}>
+          {this.props.children}
+        </main>
+      </Aux>
+    );
+  }
+}
 
 export default Layout;
